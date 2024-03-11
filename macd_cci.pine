@@ -1,0 +1,21 @@
+//@version=5
+indicator("下部指标", shorttitle="下部指标", timeframe="", timeframe_gaps=true)
+
+// ---------- MACD Start ----------
+show_macd = input.bool(true, "MACD", group="MACD")
+macd_fast_length = input.int(12, title="快线长度", group="MACD", minval=1)
+macd_slow_length = input.int(26, title="慢线长度", group="MACD", minval=1)
+macd_signal_length = input.int(9, title="信号线平滑", group="MACD", minval=1, maxval=50)
+
+macd = ta.ema(close, macd_fast_length) - ta.ema(close, macd_slow_length)
+macd_signal = ta.ema(macd, macd_signal_length)
+macd_hist = macd - macd_signal
+
+alertcondition(macd_hist[1] >= 0 and macd_hist < 0, title='上升到下降', message='MACD直方图从上升状态切换到下降状态')
+alertcondition(macd_hist[1] <= 0 and macd_hist > 0, title='下降到上升', message='MACD直方图从下降状态切换到上升状态')
+
+hline(0, "零线", color = color.new(#787B86, 50))
+plot(show_macd ? macd_hist : na, title="直方图", style = plot.style_columns, color = (macd_hist >= 0 ? (macd_hist[1] < macd_hist ? #26A69A : #B2DFDB) : (macd_hist[1] < macd_hist ? #FFCDD2 : #FF5252)))
+plot(show_macd ? macd : na, title = "MACD", color = #2962FF)
+plot(show_macd ? macd_signal : na, title = "信号", color = #FF6D00)
+// ---------- MACD End ----------
