@@ -1,0 +1,18 @@
+//@version=5
+indicator(title="Commodity Channel Index", shorttitle="CCI", format=format.price, precision=2, timeframe="", timeframe_gaps=true)
+
+cci_length = input.int(20, title="长度", group="CCI", minval=1)
+cci_src = input.source(hlc3, title="来源", group="CCI")
+cci_ma = ta.sma(hlc3, length)
+
+cci = (cci_src - cci_ma) / (0.015 * ta.dev(cci_src, cci_length))
+plot(cci, "CCI", color=#2962FF)
+
+cci_band1 = hline(100, "Upper Band", color=#787B86, linestyle=hline.style_dashed)
+hline(0, "Middle Band", color=color.new(#787B86, 50))
+cci_band0 = hline(-100, "Lower Band", color=#787B86, linestyle=hline.style_dashed)
+fill(cci_band1, cci_band0, color=color.rgb(33, 150, 243, 90), title="Background")
+
+smoothingLength = input.int(5, title="长度", group="平滑", minval=1, maxval=100)
+smoothingLine = ta.sma(cci, smoothingLength)
+plot(smoothingLine, title="Smoothing Line", color=#f37f20, display=display.none)
