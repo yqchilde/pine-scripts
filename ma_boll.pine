@@ -1,0 +1,41 @@
+//@version=5
+indicator("上部指标", shorttitle="上部指标", overlay=true, timeframe="", timeframe_gaps=true)
+
+// ---------- MA Start ----------
+show_ma = input.bool(true, "MA指标", group="移动平均数")
+
+show_ma1   = input.bool(true, "MA1", group="移动平均数", inline="MA1")
+ma1_length = input.int(5, "", group="移动平均数", inline="MA1", minval=1)
+ma1_color  = input.color(#fffb00, "", group="移动平均数", inline="MA1", display=display.data_window)
+
+show_ma2   = input.bool(true, "MA2", group="移动平均数", inline="MA2")
+ma2_length = input.int(20, "", group="移动平均数", inline="MA2", minval=1)
+ma2_color  = input.color(#001eff, "", group="移动平均数", inline="MA2", display=display.data_window)
+
+show_ma3   = input.bool(true, "MA3", group="移动平均数", inline="MA3")
+ma3_length = input.int(60, "", group="移动平均数", inline="MA3", minval=1)
+ma3_color  = input.color(#fb5400e9, "", group="移动平均数", inline="MA3", display=display.data_window)
+
+show_ma4   = input.bool(true, "MA4", group="移动平均数", inline="MA4")
+ma4_length = input.int(120, "", group="移动平均数", inline="MA4", minval=1)
+ma4_color  = input.color(#ff0000, "", group="移动平均数", inline="MA4", display=display.data_window)
+
+plot(show_ma and show_ma1 ? ta.sma(close, ma1_length) : na, color=ma1_color, title="MA1")
+plot(show_ma and show_ma2 ? ta.sma(close, ma2_length) : na, color=ma2_color, title="MA2")
+plot(show_ma and show_ma3 ? ta.sma(close, ma3_length) : na, color=ma3_color, title="MA3")
+plot(show_ma and show_ma4 ? ta.sma(close, ma4_length) : na, color=ma4_color, title="MA4")
+// ---------- MA End ----------
+
+// ---------- Bollinger Bands Start ----------
+show_bb   = input.bool(true, "布林带", group="布林带")
+bb_length = input.int(20, "长度", group="布林带", inline="BB", minval=1)
+bb_mult   = input.float(2.0, "标准差", group="布林带", inline="BB", minval=0.001, maxval=50)
+bb_offset = input.int(0, "偏移", group="布林带", inline="BB", minval=-500, maxval=500)
+
+upper = ta.sma(close, bb_length) + bb_mult * ta.stdev(close, bb_length)
+lower = ta.sma(close, bb_length) - bb_mult * ta.stdev(close, bb_length)
+plot(show_bb ? ta.sma(close, bb_length) : na, color=#FF6D00, offset=bb_offset, title="中轨")
+p1 = plot(show_bb ? upper : na, color=#2962FF, offset=bb_offset, title="上轨")
+p2 = plot(show_bb ? lower : na, color=#2962FF, offset=bb_offset, title="下轨")
+fill(p1, p2, color=color.rgb(33, 150, 243, 95), title="BB背景")
+// ---------- Bollinger Bands End ----------
